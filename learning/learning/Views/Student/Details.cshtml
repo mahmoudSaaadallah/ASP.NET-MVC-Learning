@@ -1,0 +1,24 @@
+﻿
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.Id</td>
+            <td>@Model.Name</td>
+            <td>@Model.Address</td>
+            <td><img src="/Images/Student/@Model.Image" height="120" width="170"/></td>
+        </tr>
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="4" style="text-align:right; font-size:24px"><a asp-controller="Student" asp-action="Index">Back</a></td>
+        </tr>
+    </tfoot>
+</table>

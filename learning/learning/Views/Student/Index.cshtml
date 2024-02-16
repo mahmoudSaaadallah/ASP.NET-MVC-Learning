@@ -1,0 +1,22 @@
+﻿@model List<Student>
+<table class="table table-bordered table-hover">
+    <thead>
+        <th>Student Id</th>
+        <th>Student Name</th>
+        <th>Student Address</th>
+        <th>Student Image</th>
+    </thead>
+    <tbody>
+        @foreach (Student student in Model)
+        {
+            <tr>
+                <td>@student.Id</td>
+                <td class="text-center"><a asp-controller="Student" asp-action="Details" asp-route-id="@student.Id">@student.Name </a></td>
+                <td>@student.Address</td>
+                <td class="text-center"><a asp-controller="Student" asp-action="Details" asp-route-id="@student.Id"><img src="/Images/Student/@student.Image" height="120px" width="150px" /></a></td>
+
+            </tr>
+        
+        }
+    </tbody>
+</table>

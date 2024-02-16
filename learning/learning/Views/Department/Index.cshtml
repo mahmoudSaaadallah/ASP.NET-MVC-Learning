@@ -1,0 +1,27 @@
+﻿@model List<Department>
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Department Id</th>
+    <th>Department Name</th>
+    <th>Manager Name</th>
+    <th>Employees</th>
+    </thead>
+    <tbody>
+        @foreach (Department department in Model)
+        {
+            <tr>
+                <td>@department.Id</td>
+                <td >@department.Name </td>
+                <td>@department.ManagerName</td>
+                <td>@foreach(Employee employee in department.Employees)
+                    {
+                        <ul>
+                            <li>@employee.Name</li> 
+                        </ul>
+                    }
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
