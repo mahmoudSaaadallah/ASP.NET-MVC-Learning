@@ -1,0 +1,31 @@
+﻿@model Course
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Name</th>
+    <th>Degree</th>
+    <th>MinimumDegree</th>
+    <th>Department</th>
+    <th>CoursesResults</th>
+    <th>Instructor</th>
+    </thead>
+    <tbody>
+
+    <td>@Model.Name</td>
+    <td>@Model.Degree</td>
+    <td>@Model.MinimumDegree</td>
+    <td>@Model.Department.Name</td>
+
+    <td>
+            @foreach (CourseResult result in Model.CoursesResults)
+            {
+            <p>@result.Degree</p>
+            }
+    </td>
+    <td>
+            @foreach (Instructor result in Model.Instructors)
+            {
+            <p>@result.Name</p>
+            }
+    </td>
+    </tbody>
+</table>

@@ -1,0 +1,18 @@
+﻿@model List<CourseResult>
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Course</th>
+    <th>Degree</th>
+    <th>Trainers</th>
+
+    </thead>
+    <tbody>
+        @foreach (CourseResult cr in Model)
+        {
+        <td>@cr.Course.Name</td>
+        <td>@cr.Degree</td>
+       
+        <td>@cr.Trainee.Name</td>
+        }
+    </tbody>
+</table>

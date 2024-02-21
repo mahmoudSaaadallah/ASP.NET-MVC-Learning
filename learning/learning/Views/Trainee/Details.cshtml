@@ -1,0 +1,26 @@
+﻿@model learning.ViewModels.TraineeDetailsViewModel
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Name</th>
+    <th>id</th>
+    <th>Course</th>
+    <th>Grade</th>
+    </thead>
+    <tbody>
+
+    <td>@Model.Name</td>
+    <td>@Model.Id</td>
+        <td>@foreach(Course c in Model.Courses)
+            {
+                <p>@c.Name</p>
+            }
+        </td>
+       
+            <td style="color:@Model.color">
+                @foreach(CourseResult c in Model.Cresults)
+                {
+                <p>@c.Degree</p>
+                }
+            </td>
+    </tbody>
+</table>

@@ -1,0 +1,20 @@
+﻿@model Instructor
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Name</th>
+    <th>Salary</th>
+    <th>Address</th>
+    <th>Department</th>
+    <th>Course</th>
+    <th>Image</th>
+    </thead>
+    <tbody>
+
+        <td>@Model.Name</td>
+        <td>@Model.Salary</td>
+        <td>@Model.Address</td>
+        <td>@Model.Department.Name</td>
+        <td>@Model.Course.Name</td>
+    <td><img src="/Images/Instructor/@Model.ImageUrl" height="160px" width="190px" /></td>
+    </tbody>
+</table>

@@ -112,5 +112,11 @@ namespace learning.Models
         // The DbSet class used to add table to database.
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Department { get; set; }
+        public DbSet<Instructor> Instructors { get; set; }
+        public DbSet<Trainee> Trainers { get; set; }
+        public DbSet<CourseResult> CoursesResults { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Student> Students { get; set; }
+
     }
 }

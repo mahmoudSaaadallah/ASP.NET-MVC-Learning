@@ -1,0 +1,29 @@
+﻿@model List<Trainee>
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Name</th>
+    <th>Address</th>
+    <th>Department</th>
+    <th>Grade</th>
+    <th>CoursesResults</th>
+    <th>Image</th>
+
+    </thead>
+    <tbody>
+        @foreach (Trainee trainee in Model)
+        {
+        <td>@trainee.Name</td>
+        <td>@trainee.Address</td>
+        <td>@trainee.Department.Name</td>
+        <td>@trainee.Grade</td>
+        <td>@foreach(CourseResult result in trainee.CoursesResults)
+                {
+                    <p>@result.Degree</p>
+                }
+            </td>
+        <td><img src="/Images/Trainee/@trainee.ImageUrl" height="160px" width="190px" /></td>
+
+
+        }
+    </tbody>
+</table>

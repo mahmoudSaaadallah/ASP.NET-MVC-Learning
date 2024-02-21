@@ -17,6 +17,22 @@
       "PackagePath": "staticwebassets\\Images\\Employee\\IMG20200316005620.jpg"
     },
     {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Instructor\\IMG20191207234622.jpg",
+      "PackagePath": "staticwebassets\\Images\\Instructor\\IMG20191207234622.jpg"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Instructor\\IMG20191207235431.jpg",
+      "PackagePath": "staticwebassets\\Images\\Instructor\\IMG20191207235431.jpg"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Instructor\\IMG20200316005620.jpg",
+      "PackagePath": "staticwebassets\\Images\\Instructor\\IMG20200316005620.jpg"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\OrderOfMiddelWare\\MiddelWareOrder.png",
+      "PackagePath": "staticwebassets\\Images\\OrderOfMiddelWare\\MiddelWareOrder.png"
+    },
+    {
       "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Student\\IMG_٢٠١٩١١٢١_٠٠٥٣٠١.jpg",
       "PackagePath": "staticwebassets\\Images\\Student\\IMG_٢٠١٩١١٢١_٠٠٥٣٠١.jpg"
     },
@@ -27,6 +43,18 @@
     {
       "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Student\\img.jpg",
       "PackagePath": "staticwebassets\\Images\\Student\\img.jpg"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Trainee\\IMG_٢٠١٩١١٢١_٠٠٥٣٠١.jpg",
+      "PackagePath": "staticwebassets\\Images\\Trainee\\IMG_٢٠١٩١١٢١_٠٠٥٣٠١.jpg"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Trainee\\gg.png",
+      "PackagePath": "staticwebassets\\Images\\Trainee\\gg.png"
+    },
+    {
+      "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\Images\\Trainee\\img.jpg",
+      "PackagePath": "staticwebassets\\Images\\Trainee\\img.jpg"
     },
     {
       "Id": "G:\\c#Project\\learning\\learning\\wwwroot\\css\\site.css",

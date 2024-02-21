@@ -1,0 +1,11 @@
+﻿@model List<Student>
+<h1>@ViewBag.Message</h1>
+<select>
+    @foreach (string n in ViewBag.Nationality)
+    {
+        <option>@n</option>
+    }
+
+</select>
+
+

@@ -1,0 +1,38 @@
+﻿@model List<Course>
+<table class="table table-bordered table-hover">
+    <thead>
+    <th>Name</th>
+    <th>Degree</th>
+    <th>MinimumDegree</th>
+    <th>Department</th> 
+    <th>CoursesResults</th>
+    <th>Instructor</th>
+
+    </thead>
+    <tbody>
+        @foreach (Course course in Model)
+        {
+        <td>@course.Name</td>
+        <td>@course.Degree</td>
+        <td>@course.MinimumDegree</td>
+        <td>@course.Department.Name</td>
+        <td>
+                @foreach (CourseResult result in course.CoursesResults)
+                {
+                <p>@result.Degree</p>
+                }
+        </td>
+        <td>
+                @foreach (Instructor result in course.Instructors)
+                {
+                <p>@result.Name</p>
+                }
+        </td>
+
+        
+
+
+        }
+    </tbody>
+</table>
+

@@ -1,0 +1,29 @@
+﻿@model learning.ViewModels.StudentViewModel;
+<h1>@Model.Message</h1>
+<select>
+    @foreach (string n in Model.Nationality)
+    {
+        <option>@n</option>
+    }
+
+</select>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Image</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@Model.StudentId</td>
+            <td>@Model.StudentName</td>
+            <td>@Model.Address</td>
+            <td><img src="/Images/Student/@Model.ImageUrl" height="120" width="170" /></td>
+        </tr>
+    </tbody>
+    </table>
+

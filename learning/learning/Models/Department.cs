@@ -16,6 +16,14 @@ namespace learning.Models
         public virtual List<Employee>? Employees { get; set; }
 
 
+
+        public virtual List<Instructor>? Instructors { get; set; }
+        public virtual List<Course>? Courses { get; set; }
+        public virtual List<Trainee>? Trainees { get; set; }
+    
+
+
+
         // We will add the IsDeleted property here as a bool and give it default value as
         //   false to apply the soft delete as we don't want to delete the department when we
         //   delete it we want to hide it by making this property equal to true and when we

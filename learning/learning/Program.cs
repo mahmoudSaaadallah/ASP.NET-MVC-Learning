@@ -12,7 +12,15 @@ namespace learning
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddSession();// If we used it like this this mean it will take the
+                                          //  default session settings which is the life time is
+                                          //  20 minutes, but we could change it by adding
+                                          //  another delegate refer to the new session
+                                          //  implementation
+            builder.Services.AddSession(conf =>
+            {
+                conf.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
             var app = builder.Build();
 
 
@@ -138,6 +146,10 @@ namespace learning
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
+            // The pipeline of session will be after routing and Authorization.
+            app.UseSession();
+            // but it's not enough to add pipeline and use session without adding its services 
+            // To add it we have to go above with builder service and it its services.
             app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
