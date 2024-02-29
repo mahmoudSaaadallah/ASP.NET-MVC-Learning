@@ -1,0 +1,22 @@
+﻿@model Department
+<form asp-action="Create" asp-controller="Department" class="form form-control">
+   <div>
+        <label asp-for="Name"></label>
+    <input asp-for="Name" class="form-control" placeholder="Department Name" />
+        <span asp-validation-for="Name" class="alert-danger "></span>
+   </div>
+   <br />
+    <div>
+        <label asp-for="ManagerName"></label>
+        <input asp-for="ManagerName" class="form-control" placeholder="Manger Name" />
+        <span asp-validation-for="ManagerName" class="alert-danger"></span>
+        <br />
+    </div>
+    <div>
+        <input type="submit" value="Create" class="btn btn-success form-control" />
+    </div>
+
+</form>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>

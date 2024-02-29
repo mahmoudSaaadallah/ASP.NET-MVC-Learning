@@ -50,6 +50,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ291cnNlXE5vdEZvdW5kRXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[G:/c\#Project/learning/learning/Views/Department/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudFxDcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [G:/c\#Project/learning/learning/Views/Department/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcRGVwYXJ0bWVudFxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
@@ -92,6 +96,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [G:/c\#Project/learning/learning/Views/Student/Edit.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[G:/c\#Project/learning/learning/Views/Student/EditTest.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxFZGl0VGVzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [G:/c\#Project/learning/learning/Views/Student/GetAll.cshtml]

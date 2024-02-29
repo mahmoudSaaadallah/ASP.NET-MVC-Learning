@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace learning.Models
@@ -6,6 +7,9 @@ namespace learning.Models
     public class CourseResult
     {
         public int Id { get; set; }
+        [Required]
+        [Range(0, 500)]
+        [RegularExpression("[0-9]")]
         public int Degree { get; set; }
 
         [ForeignKey("Course")]

@@ -40,6 +40,28 @@ using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Routing;
 using static System.Net.WebRequestMethods;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ViewEngines;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using Microsoft.AspNetCore.Http.HttpResults;
+using static Azure.Core.HttpHeader;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.FileSystemGlobbing;
+using NuGet.Packaging.Signing;
+using System.Runtime.InteropServices;
+using Azure;
+using Microsoft.AspNetCore.Components;
+using Microsoft.CodeAnalysis.Elfie.Serialization;
+using Microsoft.Identity.Client;
+using System.Diagnostics.Metrics;
+using System.Drawing;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace learning.Controllers
 {
@@ -992,6 +1014,21 @@ namespace learning.Controllers
         [HttpPost]
         // The HttpPost mean that the following method will not be called until the user press the
         //   submit button, Which means the data will pass through JS Validations.
+
+        // Now what about security sometimes hacker take the same view of your login page and make
+        //   another one with the same design and send the link of this page for the people to sign in
+        //   in your website as the users know your design of your website they will think that they
+        //   are using your website and they will enter their data and the hacker in this case will
+        //   make a valuable to accept the data that the users enter and he will make the action of
+        //   his form  refer to your website so your website will be open after the user enter his
+        //   data and the user will think that he used the right website but he will never know that
+        //   his data has been stalled
+        // To prevent this thing we could use an attribute set responsible for not accepting any
+        //   tokens from foreign website or from foreign pages he will accept talking the only from
+        //   the local website which means your domain.
+        [ValidateAntiForgeryToken]
+        // so the validate anti-forin token is a variable that used to not accept or to make sure that
+        //   the data has been sent from the domain of the website not from a foreign to domain
         public IActionResult Create(Student st)
         {
             // here we could  put a backend Validation like Validates if the st is not Null and another things like validate each prop in st and so on...
@@ -1056,6 +1093,548 @@ namespace learning.Controllers
                 return RedirectToAction("Edit", student.Id);
             }
         }
+
+        #endregion
+
+
+
+        // If we go to edit view we will find that we made a form to that contains some inputs which
+        //   accept data from client side and sent it to server side.
+        // But if look to one of these input tags we will find it look like this:
+        // <input type="text" id="propName" Name="propName" Value=@model.propName/>
+        // As we see here we but the Name of input as the name of prop that will accept this data 
+        //   or it will not work, as if we miss spill the prop name in input tag it will not work 
+        //   also this way doesn't has an auto complete so it will be difficult to deal with way.
+        // Micro soft provide another two features that will solve this problem
+        // The first way is to use Html Helper.
+        // As we know the View inherit ViewBag, ViewData, and TempData it also inherit Html helper.
+
+        #region Html Helper in View:
+        // In ASP.NET MVC, HTML Helpers play a crucial role in rendering HTML controls within Razor views.
+        // These helpers simplify the process of binding model properties to HTML controls and vice versa.
+        // HTML Helpers in ASP.NET MVC are methods that generate HTML markup programmatically.
+        // They provide a convenient way to render HTML controls in views based on the model
+        //   data.
+        // HTML Helpers simplify the process of generating HTML elements with the correct
+        //   markup, attributes, and data bindings
+
+
+        // Purpose: HTML Helpers are used to generate HTML markup dynamically in views.
+        // They abstract away the complexities of writing HTML directly in the view templates and
+        //   provide a more concise and maintainable way to render HTML controls.
+
+
+        // Types of HTML Helpers:
+        // Built-in HTML Helpers: ASP.NET MVC provides a set of built-in HTML Helpers for
+        //   generating common HTML elements, such as form inputs, links, buttons, labels, and more.
+        // Custom HTML Helpers: Developers can create custom HTML Helpers to encapsulate reusable
+        //   HTML rendering logic.
+        // Custom HTML Helpers are especially useful for generating complex or custom HTML elements.
+
+
+        // Syntax: HTML Helpers are typically invoked in Razor views using the @ symbol followed by
+        //   the helper method name.
+        // The syntax varies depending on the helper method and its parameters.
+
+
+        // Example of html helpers and what it is refer to?
+        // @Html.TextBox("propName")  =>  <input type="text" id="propName" name="propName" value=""/>
+        // @Html.Label("Name")        =>  <label id="Name">Name<label/>
+        // @Html.DropDownList("Name") =>  <Select 
+
+        // We have to know that the HTML helper that we used before is a lossly type As it accept the
+        //   name of prop as a magic string so there is no auto complete to detect compile error.
+        // So we write the name of prop in a wrong way it will not work.
+        // Before we move to the strong type let's see how the html helper send data to Action 
+        // First the HTML helper search about prop that we write as a string in viewBage, then
+        //   ViewData, then it will search about it in Model if the HTML helper find any prop with
+        //   the same name it will submit the data to it. if not it will sent null. 
+
+
+        // Now for the strong type which is better to use as it search about it in Model only 
+        //   and it contains auto Complete.
+        // @Html.TextBoxFor(model => model.Property)
+        // @Html.LabelFor(model => model.Property)
+        // @Html.DropDownListFor(model => model.Property, new SelectList(items, "Value", "Text"))
+
+        // As we see here it accepts data as a delegate not as a string, so it will detect errors in
+        //   compile time not run time.
+        // We have to know to use the strong type Of Html Helper we have to do it inside View with
+        //   strong type model or it will not work.
+
+        // The strong Html helper also has another overloads that accepts html code, but it accept it
+        //   as a TModel so we have to write it as an object using new keyword.
+        // @Html.TextBoxFor(s => s.Name, new{I could write here any html command or css command})
+        // @Html.TextBoxFor(s => s.Name, new{style = "color:red; text-align:left;", placeholder="Student Name"})
+        // So as we see here we used the style attribute and placeholder which is an HTML code inside
+        //   the object to use it inside the HTML helper
+        // But we have to know that if we want to use any class of HTML so we can't use the word
+        //   class directly as the word class is a word inside c sharp code so we can't use it
+        //   directly instead of that we have to put @ before it
+        // @Html.TextBoxFor(s => s.Name, new{style = "color:red; text-align:left;", placeholder="Student Name", @class="form-control"})
+
+        // We have some thing with Html helper called Editor for which uses to create an input field
+        //   and detect type of this input field depend on type of prop that we deal with so we don't
+        //   have to use a specific type for inputs. 
+        // Also if you put a data annotation before the prop in model the Editor will see this data
+        //   annotation and will take type that used in this data annotations.
+
+        // Also in HTML helper we have another thing called actionLink that used as an anchor tag
+        //   which accept to attributes one as a string which is the link text "the text that will
+        //   appear in the web page to click on it" and the other is the action name "the method of
+        //   Action that you want to go to.
+
+        // The actionLink in HTML helper has seven overloads one of them accepts the link text and
+        //   action method name
+        // The second accepts link text action method name end control name.
+        // The third one accepts link text action method name controller name and attributes if the
+        //   action method accepts attributes but we have to know that it accepts attributes as and
+        //   object of type t model.
+        // The first one accepts link text action method name controller name attributes and HTML
+        //   code as an anonymous object of type t model.
+
+
+
+        // Model Binding: HTML Helpers are often used in conjunction with model binding to generate
+        //   HTML controls bound to model properties.
+        // For example, Html.TextBoxFor generates an input element bound to a model property, and
+        //   Html.LabelFor generates a label element associated with a model property.
+
+
+        // IntelliSense Support: HTML Helpers provide IntelliSense support in Razor views, making it
+        //   easier to discover available helper methods and their parameters.
+        // This helps developers write code more efficiently and with fewer errors.
+
+
+        // Advantages:
+        // Type Safety: HTML Helpers provide type-safe rendering of HTML controls based on the
+        //   model's properties, reducing the risk of runtime errors.
+        // Consistency: HTML Helpers ensure consistent markup and attribute settings across views,
+        //   promoting code maintainability and adherence to design standards.
+        // Abstraction: HTML Helpers encapsulate HTML generation logic, making views cleaner and
+        //   more focused on presentation logic rather than markup details.
+
+
+
+        // Extension Methods: HTML Helpers are implemented as extension methods on the HtmlHelper
+        //   class or its derivatives.
+        // This allows them to be easily extended and customized to suit specific requirements.
+
+        #endregion
+
+        #region Tag Helper in View:
+
+        // Tag Helpers are a feature introduced in ASP.NET Core MVC that enables server-side code
+        //   to participate in the rendering and processing of HTML elements.
+        // They provide a more natural and readable way to generate HTML markup compared to
+        //   traditional HTML Helpers or inline code blocks.
+
+        // When we use Html helper we don't write any HTML command, but with tag helper we have to
+        //   write html command, but with tag helper it will be better to work with prop in models.
+
+        // Purpose: Tag Helpers simplify the process of generating HTML markup by allowing developers
+        //   to use HTML-like syntax with server-side functionality.
+        // They blend the familiarity of HTML with the power and flexibility of server-side code,
+        //   making views more readable and maintainable.
+
+
+        // Types of Tag Helpers:
+        // Built-in Tag Helpers: ASP.NET Core MVC includes a set of built-in Tag Helpers for common
+        //   HTML elements, form controls, and other UI components.
+        //
+        // Custom Tag Helpers: Developers can create custom Tag Helpers to encapsulate reusable HTML
+        //   generation logic or to extend the functionality provided by built-in Tag Helpers.
+
+
+        // Syntax: Tag Helpers are written as HTML-like elements in Razor views, prefixed with
+        //   the asp- attribute.
+        // The syntax resembles standard HTML attributes but with additional server-side functionality.
+
+
+        // <input asp-for="Property" />
+        // <label asp-for="Property"></label>
+        // <select asp-for="Property" asp-items="items"></select>
+
+        // As we see in the previous examples we used a tag helper called asp-for, we have to know
+        //   that all tags helpers start with asp-.
+        // The asp-for attribute is used to indicate the property depend on the property of model
+        // So in the first example we used it with input, and we didn't give this input specific name
+        //   or id or type but we use asp-for with specific attribute so this input tag will take its
+        //   name, id, and type from this attribute.
+
+
+
+        // Model Binding: Like HTML Helpers, Tag Helpers often work with model binding to generate
+        //   HTML controls bound to model properties.
+        // For example, the asp-for attribute specifies the model property to which the generated
+        //   HTML element is bound.
+
+
+
+        // IntelliSense Support: Tag Helpers provide IntelliSense support in Razor views, making it
+        //   easier to discover available Tag Helpers and their attributes.
+        // This helps developers write code more efficiently and with fewer errors.
+
+
+
+        // Advantages:
+        // Readability: Tag Helpers improve the readability of Razor views by providing a more
+        //   natural and HTML-like syntax.
+        // Separation of Concerns: Tag Helpers promote separation of concerns by separating HTML
+        //   markup from server-side logic, resulting in cleaner and more maintainable views.
+        // Flexibility: Tag Helpers offer flexibility and extensibility, allowing developers to
+        //   create custom Tag Helpers to suit specific requirements or integrate with third-party libraries.
+
+
+        // Extension and Customization: Tag Helpers can be extended and customized by creating custom
+        //   Tag Helper classes.
+        // Developers can define their own Tag Helper classes and attributes to encapsulate reusable
+        //   HTML generation logic or to extend the functionality provided by built-in Tag Helpers.
+
+
+
+        // Now let's move to the part of tags helper that will be used for each Html tag.
+
+
+        // Anchor Tag Helper (<a asp-*>):
+        // asp-controller: Specifies the controller name for the target action.
+        // asp-action: Specifies the action name within the controller.
+        // asp-route-*: Allows passing route parameters to the target action.
+        // <a asp-controller="Home" asp-action="Details" asp-route-id="123">Details</a>
+
+
+
+        // Form Tag Helper (<form asp-*>):
+        // asp-controller: Specifies the controller name handling the form submission.
+        // asp-action: Specifies the action name within the controller handling the form submission.
+        // asp-route-*: Allows passing route parameters to the target action.
+        // asp-antiforgery= "true": Generates an anti-forgery token in the form.
+        // <form asp-controller="Account" asp-action="Login" method="post">
+        //    <!-- Form fields -->
+        // </form>
+
+
+
+
+        // Input Tag Helpers (<input asp-*>):
+        // asp-for: Binds the input field to a model property.
+        // asp-placeholder: Specifies a placeholder text for the input field.
+        // asp-for="PropertyName": Generates an input field bound to the specified model property.
+        // <input asp-for="UserName" />
+
+
+
+        // Label Tag Helper (<label asp-*>):
+        // asp-for: Specifies the model property to which the label is associated.
+        // <label asp-for="UserName"></label>
+
+
+
+        // Select Tag Helper (<select asp-*>):
+        // asp-for: Binds the select element to a model property.
+        // asp-items: Specifies a collection of SelectListItem objects to populate the select options.
+        // asp-items= "Model.PropertyName": Binds the select options to the specified model property.
+        // <select asp-for="CountryId" asp-items="Model.Countries"></select>
+
+
+
+
+        // TextArea Tag Helper (<textarea asp-*>):
+        // asp-for: Binds the textarea element to a model property.
+        // asp-for="PropertyName": Generates a textarea element bound to the specified model property.
+        // <textarea asp-for="Description"></textarea>
+
+
+
+
+        // Image Tag Helper (<img asp-*>):
+        // asp-src: Specifies the image URL.
+        // <img asp-src="~/images/logo.png" />
+
+
+
+        // Partial Tag Helper (<partial asp-*>):
+        // asp-page: Specifies the Razor Page file to render as a partial view.
+        // asp-model: Binds the partial view to a model.
+        // <partial asp-page="/Shared/_Footer" />
+
+
+
+
+        #endregion
+
+
+        #region DataValidation
+
+        // When we work with data that comes from user we have to make sure that this data is valid 
+        //   before we save it to database.
+        // We have two ways to validate data one for client side validation and  the other for server
+        //   side validation.
+        // With client side validation we make the validation using JS.
+        // But we can't depend on the client side validation as if the user is a programmer or knowing
+        //   programming, he might stop the client side validation, So we have to validate all the
+        //   data that accepted from client before we save it to database.
+
+        // Server side Validation:
+        // First step is to validate properties that accepted from client side before we save it.
+        //   this could happen using Data Annotation for model properties.
+        // As When we create a model property we have to put all the validation for these properties
+        //   as data annotations attributes.
+        // To see this data annotation validation go to any model.
+        // Now after we add data annotation to validate data for each model property we need now to
+        //   know when the server side checks all this validation?
+
+        // We have to know the checks process happen in the post method not in the get method as we
+        //   said before the get method is responsible for just opening the form for user, but the
+        //   post method accepts data from user and saves it to database.
+        // So We have to make sure that the post method will validate data.
+        // It will be so boring if we validate every property by an if statement, and this doesn't
+        //   make sense because it will take a long time, So micro soft provide a property in
+        //   Controller base class called ModelState
+
+        #region ModelState 
+        // In ASP.NET MVC, the ModelState property in the controller is used to manage the state of
+        //   model objects and to communicate validation errors back to the view. It is an instance of
+        //   the ModelStateDictionary class, which stores information about model binding, validation
+        //   errors, and the state of model properties.
+        // Here's a detailed explanation of the ModelState property and its usage in a controller:
+
+        // Purpose: The primary purpose of the ModelState property is to provide a way to validate and
+        //   manage the state of model objects during HTTP request processing.
+
+
+        // ModelStateDictionary: The ModelState property is of type ModelStateDictionary, which is a
+        //   dictionary-like collection that stores key-value pairs of model property names and
+        //   associated state information, such as validation errors.
+
+
+        // Validation Errors: When model binding or validation fails during request processing,
+        //   validation errors can be added to the ModelState property using the
+        //   ModelState.AddModelError() method. These errors are typically displayed to the user in
+        //   the view to provide feedback on invalid input.
+        // ModelState.AddModelError("PropertyName", "Error message");
+
+
+        // Accessing ModelState in Views: In views, you can access the ModelState property to display
+        //   validation errors or other information about the state of model properties.
+        // For example, you can use the Html.ValidationMessageFor helper method to display validation
+        //   errors for a specific model property.
+        // @Html.ValidationMessageFor(model => model.PropertyName)
+
+
+        // Checking ModelState Validity: You can check the overall validity of the ModelState using
+        //   the ModelState.IsValid property.
+        // This property returns true if no validation errors are present, indicating that the model
+        //   is in a valid state and can be processed further.
+        // if (ModelState.IsValid)
+        //  {
+        //      Process the valid model
+        //  }
+
+
+        // Clearing ModelState: You can clear the ModelState using the ModelState.Clear method.
+        // This is useful when you want to reset the state of the model before performing additional operations.
+        // ModelState.Clear();
+
+
+
+        // ModelState Errors Handling: You can handle errors in the ModelState property by checking
+        //   its validity and displaying validation errors in the view.
+        // This helps provide a user-friendly experience by informing users about invalid input and
+        //   guiding them to correct it.
+        #endregion
+
+        // So As we know now we don't have to check the validity of the properties using if statements
+        //   for each property, As if we used just one if statement for ModelState the modelState will
+        //   check the validity for all properties in the accepting model.
+        // We have to know that the modelState checks the dataAnnotations before each property in model.
+        // So know we could use the Edit or create methods like:
+        public IActionResult EditTest(int Id)
+        {
+            Student student = _context.Students.FirstOrDefault(s => s.Id == Id);
+            return View(student);
+        }
+        [HttpPost]
+        public IActionResult EditTest(Student student)
+        {
+            // here we check if model state in valid
+            if (ModelState.IsValid)
+            {
+                _context.Students.Update(student);
+                _context.SaveChanges();
+                return RedirectToAction("GetAll");
+            }
+            else
+            {
+                return RedirectToAction("EditTest", student.Id);
+            }
+        }
+
+        // Or We could also add messages that could appear to user when model state in not valid 
+        public IActionResult EditTest2(int Id)
+        {
+            Student student = _context.Students.FirstOrDefault(s => s.Id == Id);
+            return View(student);
+        }
+        [HttpPost]
+        public IActionResult EditTest2(Student student)
+        {
+            // here we check if model state in not valid
+            if (!ModelState.IsValid)
+            {
+                ModelState.AddModelError("Failed", "The Editing didn't success");
+                  return RedirectToAction("EditTest2", student.Id);
+            }
+            else
+            {
+
+                _context.Students.Update(student);
+                _context.SaveChanges();
+                return RedirectToAction("GetAll");
+            }
+        }
+        // We have to know that for each attribute in data annotations there is a default error message.
+        // This error message could be used to display the error message for user.
+        // Also we could override the default error message to change it if we want
+        // [Required(ErrorMessage =("this filed is Required"))]
+        // using the Error Message attribute we could change the default error message.
+        // using the Error Message attribute we could change the default error message.
+
+
+        // Now the second step is to go to view and use asp-validation-for attribute to display the
+        //   error message.
+
+
+        // Now what about if I want to make a client side Validation?
+        // before we using tag helpers we need to make a JS validation for each field in form that
+        //   the use must fill, but now after using tag helpers we have an asp-for=ModelAttribute in tag
+        //   helpers and we said before this attribute will be replaced by id, name, value and data
+        //   type for this ModelAttribute.
+        // Also we have to know that all the data annotations that used to validate data in model 
+        //   could be added to client side validation using a JQuery validation in client side.
+
+        // In all MVC projects we have a jquery-validation-unobtrusive library that could understand 
+        //   data annotations but we have first to add it to View to use this library
+        // Also we have to know that this library needs another library called jquery-validation
+        //   which also need another library called jquery to work.
+        // So If I want to add the data annotations validate in client side then we need to use these
+        //   three libraries in View, and this happens by adding script tag.
+
+
+        // Now what about if I want to add a custom validation?
+        // So as We know the data annotation used as a server side validation which contain some
+        //   built-in validation attributes like Required, MinLength, MaxLength, RegularExpression
+        //   AllowNull, and so on.
+        // But we have to know that not all validation could be found as a built-in data annotation
+        //   attributes so we could make our own data annotation by create a new attribute that could
+        //   be used as a data annotation attribute
+        // To do this we have to make a new class with name end with attribute keyword and this class
+        //   must inherit ValidationAttribute class.
+        // The validationAttribute class contains a method called IsValid() which contains the logic
+        //   to check the validation of the attribute that this data and patient will be used with.
+
+        // So go to Model.UniqueAttribute class to see this custom data annotation attribute.
+
+
+
+
+
+        // All the points that we already talked about are validation using data annotations which
+        //   mean this is a server-side validation, that means The user have to submit his data to
+        //   check it. 
+        // We used the asp-validation-for attribute in the View to make this server validation work
+        //   also with client side.
+        // As we see before not all the validation that may I will need are built-in data annotations
+        //   so we learned how to create out own validation annotations attributes, but there is
+        //   another way that is used as a server validation but now it will be also work in client
+        //   side when the data changes not only when it submitted.
+        // This called Remote
+        // The best feature in Remote is the user doesn't have to submit data to check if it valid or not.
+        // Also it works without attributes which mean it works depend on the logic that you want it
+        //   to work on, so you have to make a method that contains the logic of checking and use
+        //   this method to validate data.
+
+
+
+        #region Remote Validation
+
+        // Remote validation is a feature in ASP.NET MVC that allows you to perform server-side
+        //   validation asynchronously without submitting the entire form to the server.
+        // It's useful when you need to validate a field based on some conditions that require
+        //   server-side processing, such as checking if a username or email already exists in the
+        //   database.
+
+        // Here's a step-by-step guide on how to implement remote validation in ASP.NET MVC:
+
+        // 1.Create a Validation Action:
+        // First, you need to create an action method in your controller that will handle the
+        //   validation request.
+        // This action should return a JSON result indicating whether the field is valid or not.
+        /*
+           public IActionResult IsUsernameAvailable(string username)
+            {
+                // Check if the username is available (e.g., check against the database)
+                bool isAvailable = !userRepository.UsernameExists(username);
+
+                return Json(isAvailable);
+            }
+
+         */
+
+        // 2.Define Remote Validation Attribute:
+        // Use the Remote attribute on your model property to specify the validation action method
+        //   and controller.
+        /*
+            [Remote(action: "IsUsernameAvailable", controller: "Account")]
+            public string Username { get; set; }
+         */
+
+
+        // 3.Add Remote Validation Script:
+        // Ensure that you have included the necessary jQuery validation and validation Unobtrusive
+        //   JavaScript files in your view.
+
+
+        // 4.Display Validation Error Message:
+        // In your view, include the necessary HTML elements to display the validation error message.
+        //  <span asp-validation-for="Username" class="text-danger"></span>
+
+        // With these steps, when a user enters a value in the Username field, the remote validation
+        //   will trigger an asynchronous call to the server to check if the username is available.
+        // If the username already exists, an error message will be displayed without submitting the
+        //   form to the server.
+
+        
+
+        // Now lets test this with out Student class.
+        public IActionResult chStudentNameExist(string name)
+        {
+            // We will check if the Student name is already exists in data base or not.
+            // If it exists it will return false else it will return true.
+            return !_context.Students.Any(s => s.Name == name)? Json(true):Json(false);
+        }
+        // Now after we create the logic of validation we have to go to Student model and add the
+        //   Remote Attribute with Name of Student prop.
+        // The Remote method has multiple overloads:
+        // One of them accepts The name of Action method that contains logic for validation and the
+        //   Name of controller.
+        // [Remote(action: "chStudentNameExist", controller:"Student")]
+        // This Remote attribute will be above the student name
+        // In this attribute will write that the Action is chStudentNameExist, and the controller is
+        //   Student, So we have to know that this action method must accept a variable of type same
+        //   as the prop that it used for validate it.
+
+
+        // We have to know we could make a Validation depend on two prop not only one this could
+        //   happen if we used the Remote overload that accepts with Action method and controller
+        //   name, the AdditionalFields which could be used to pass an additional filed to validation
+        //   method, but in this case the Validation method must accepts two variables or more depend
+        //   on the number of additional fields.
+
+
+        #endregion
+
+
 
         #endregion
 

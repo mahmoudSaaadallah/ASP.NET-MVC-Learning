@@ -7,7 +7,16 @@ namespace learning.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
+        [MinLength(3)]
+        [MaxLength(25)]
+        [RegularExpression(@"^[A-Za-z]+$")]
+        [Unique]
         public string Name { get; set; }
+        [Required]
+        [MinLength(3)]
+        [MaxLength(25)]
+        [RegularExpression(@"^[A-Za-z]+$")]
         public string ManagerName { get; set; }
 
         // Here we will make a prop of type list<Employee> which will refer to the relation between Department and Employee.
