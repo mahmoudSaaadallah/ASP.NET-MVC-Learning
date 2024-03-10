@@ -1,6 +1,11 @@
 using Azure;
+using Learning.Model.IRepository;
+using Learning.DataAccess.Repository;
 using Microsoft.Identity.Client;
 using System.Runtime.Intrinsics.X86;
+using Learning.DataAccess;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace learning
 {
@@ -11,7 +16,27 @@ namespace learning
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // To Apply Dependency injection we need to add all services here.
+            // We have tree type of services:
+            // 1. Build-in services that already registered In IOC Container 
+            // 2. Build-in services but not registered in IOC Container, and you could add it if you need like addSession or addDBContext
+            builder.Services.AddDbContext<ApplicationDbContext>(option =>
+            {
+                option.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=MVCLearning;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            });// This is a way to configure data base connection, but it's not the best way when we
+               // dealing with servers, the best way is to put connection of server or data base in
+               // Appsetting.jason file.
+            // Now after adding Connection string in AppSetting file then we could add this configure
+            //   here.
+            builder.Services.AddDbContext<ApplicationDbContext>( option =>
+            {
+                option.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+            }); // This way is better as we could change the connection string to data base just in appsettings file.
+
             builder.Services.AddControllersWithViews();
+          
+
             builder.Services.AddSession();// If we used it like this this mean it will take the
                                           //  default session settings which is the life time is
                                           //  20 minutes, but we could change it by adding
@@ -21,6 +46,14 @@ namespace learning
             {
                 conf.IdleTimeout = TimeSpan.FromMinutes(30);
             });
+            // We have three ways to add or inject a service in our Application:
+            // 1. Using AddScope: This will create one object per Request.
+            // 2. Using AddTransient: This will create one object per inject even if they are in the
+            //     same request.
+            // 3. Using AddSingleton: This will create one object for all the services and requests and
+            //     also for all users, and this object will not distorted until the server stops.
+           
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();  
             var app = builder.Build();
 
 
@@ -153,7 +186,7 @@ namespace learning
             app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
-
+            
             app.Run();
         }
     }

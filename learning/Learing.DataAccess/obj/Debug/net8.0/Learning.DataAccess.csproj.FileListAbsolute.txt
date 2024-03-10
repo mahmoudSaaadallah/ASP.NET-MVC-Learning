@@ -1,0 +1,15 @@
+G:\c#Project\learning\Learing.DataAccess\bin\Debug\net8.0\Learning.DataAccess.deps.json
+G:\c#Project\learning\Learing.DataAccess\bin\Debug\net8.0\Learning.DataAccess.dll
+G:\c#Project\learning\Learing.DataAccess\bin\Debug\net8.0\Learning.DataAccess.pdb
+G:\c#Project\learning\Learing.DataAccess\bin\Debug\net8.0\Learning.Model.dll
+G:\c#Project\learning\Learing.DataAccess\bin\Debug\net8.0\Learning.Model.pdb
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.csproj.AssemblyReference.cache
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.AssemblyInfoInputs.cache
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.AssemblyInfo.cs
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.csproj.CoreCompileInputs.cache
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.csproj.CopyComplete
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.dll
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\refint\Learning.DataAccess.dll
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\Learning.DataAccess.pdb
+G:\c#Project\learning\Learing.DataAccess\obj\Debug\net8.0\ref\Learning.DataAccess.dll

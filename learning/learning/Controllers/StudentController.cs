@@ -1,5 +1,5 @@
 ﻿using Azure.Core;
-using learning.Models;
+using Learning.DataAccess;
 using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.Data;
 using System.IO;
 using System.Numerics;
-using learning.ViewModels;
+using Learning.DataAccess;
 using System.Security.AccessControl;
 using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
 using System.Collections.Generic;
@@ -62,6 +62,39 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Model;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
+using static System.Collections.Specialized.BitVector32;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using NuGet.Protocol.Core.Types;
+using System.Runtime.Intrinsics.X86;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.CodeAnalysis.Options;
+using Microsoft.CodeAnalysis;
+using System.Collections;
+using System.Runtime.Intrinsics.Arm;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp;
+using Learning.Model;
+using Microsoft.Build.Evaluation;
+using System.Runtime.ConstrainedExecution;
+using Learning.DataAccess.Repository;
+using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
+using static learning.Controllers.StudentController;
+using System.Linq.Expressions;
+using Microsoft.AspNetCore.Hosting;
+using Learning.Model.IRepository;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data.Common;
+using Microsoft.SqlServer.Server;
+using Microsoft.Win32;
+using System.Web.Mvc;
+using Controller = Microsoft.AspNetCore.Mvc.Controller;
+using ViewResult = Microsoft.AspNetCore.Mvc.ViewResult;
+using ContentResult = Microsoft.AspNetCore.Mvc.ContentResult;
+using JsonResult = Microsoft.AspNetCore.Mvc.JsonResult;
+using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
+using ValidateAntiForgeryTokenAttribute = Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute;
+using BindAttribute = System.Web.Mvc.BindAttribute;
 
 namespace learning.Controllers
 {
@@ -192,6 +225,11 @@ namespace learning.Controllers
 
 
         private ApplicationDbContext _context = new ApplicationDbContext();
+        UnitOfWork _unitOfWork;
+        public StudentController(UnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
         public IActionResult Details(int id)
         {
             DummyStudentData dummyStudentData = new DummyStudentData();
@@ -934,7 +972,7 @@ namespace learning.Controllers
         // Student/TestModelBinding?Id=2&Name=Ahmed&Address=aga
         // As we see here we send the Id, Name, and Address in Url, but we custom bind to accept only 
         //   Id and Name, so the bind will ignore Address, and accept only Id and Name.
-        public IActionResult TestCustomModelBinding([Bind(include:"Id, Name")]Student st)
+        public IActionResult TestCustomModelBinding([Bind(Include ="Id, Name")]Student st)
         {
             // As the Url contains Variables name as the Properties inside Student model then this
             //   values we will send to this model.
@@ -1637,6 +1675,508 @@ namespace learning.Controllers
 
 
         #endregion
+
+        #region Partial View
+        // Partial views in ASP.NET MVC are reusable components that allow you to break down complex
+        //   views into smaller, more manageable components.
+        // They can be used to encapsulate sections of markup and logic that are reused across
+        //   multiple views or to organize code in a more modular and maintainable way.
+
+        //   Here's how you can create and use partial views in ASP.NET MVC:
+
+        // 1.Creating a Partial View:
+        // Create a new .cshtml file in the Views/Shared directory(or any other directory within the
+        //   Views folder) and add the markup you want to reuse.
+        // This file represents your partial view.
+
+
+        // 2.Rendering a Partial View:
+        // You can render a partial view in your main view by using the Html.Partial or
+        //   Html.RenderPartial helper methods.
+        // We have two ways to render partial View 
+        // 1.Using html helper: As we know that html helper could be used with dot net framework, and
+        //   dot net framework core then we could use the html helper with both the new and old projects.
+        // with html helper we could use any way of the following:
+        // @Html.Partial("NameOfPatialViwe")
+        // @Html.PartialAsync("NameOfPatialViwe")
+        // @{Html.RenderPartial("NameOfPatialViwe")}
+        // @Html.RenderPartialAsync("NameOfPatialViwe")
+
+        // These are four ways to use the html helper to add partial view, but if we look to the third
+        //   way we have to know that with RenderPartial() method we have to use curl braces with it
+        //   as this method return Void, so it must be used with Curl braces.
+
+        // Also it's better to use the Async method not the others.
+
+
+        // 2.Using tag helper: As we know that the tag helper used only with dot net framework core,
+        //   so it would be better if we used it with the new projects.
+        // With tag helper we could use the <partial> tag.
+        //<partial name="NameOfPatialViwe" model="ModelName"/>
+        // As we can see this example of code we have to know that partial has some attributes:
+        //  name: which accepts the name of PatialViwe.
+        //  model: this could be used if the partial has a strong type, which means if the partial
+        //   View accepts a specific model.
+
+
+
+        // Passing Model to Partial View:
+        // You can also pass a model to a partial view using the @model directive and render it within
+        //   the partial view.
+
+        // Now if we back again to the Html helper how we could pass the model to a partial view?
+        // We could this using the same methods but adding the model to this methods.
+        // Partial View with Model Data:
+        // When rendering a partial view with model data, you can pass the model explicitly using the
+        //   Html.Partial method.
+        // @Html.Partial("_PartialView", model)
+
+
+
+        // Using @Html.RenderPartial:
+        // Html.RenderPartial is similar to Html.Partial, but it directly writes the result to the
+        //   output stream instead of returning it as a string.
+        // It's useful when you want to include a partial view but don't need to capture its output.
+        #endregion
+
+
+        // Now after We did all the above action methods, if we looked back to them we would find that
+        //   there are some repeating for some of the queries like firstOrDefault to get the a record
+        //   form Data base depend on his Id, or we will find ToList() to get all the records from
+        //   data base and more.., also we will find that for all the other controller we have to
+        //   repeat all these query to access data base and get or update or delete a record from DB.
+        // To avoid the Repeating we have to use The DRY Design pattern.
+        // DRY ==> Don't repeat yourself.
+        // Dependence injection or Repository Pattern both of them apply the DRY pattern.
+
+
+        #region Repository Pattern
+        // In this extensive guide, we will go through everything you will need to know about
+        //   Repository Pattern in ASP.NET Core, Generic Repository Patterns, Unit of Work and
+        //   related topics.
+        // We will build a project right from scratch where we implement a clean architecture to
+        //   access data.
+
+
+        // What’s a Repository Pattern?
+        // A Repository pattern is a design pattern that mediates data from and to the Domain and
+        //   Data Access Layers(like Entity Framework Core / Dapper).
+        // Repositories are classes that hide the logics required to store or retrieve data.
+        // Thus, our application will not care about what kind of ORM we are using, as everything
+        //   related to the ORM is handled within a repository layer.
+        // This allows you to have a cleaner separation of concerns.
+        // Repository pattern is one of the heavily used Design Patterns to build cleaner solutions.
+        // So we use Repository pattern to avoid the redundancy of code and also to add a layer to
+        //   deal with data base and avoid dealing with data base through controllers.
+
+
+        // Benefits of Repository Pattern:
+        // 1.Reduces Duplicate Queries.
+        //   Imagine having to write lines of code to just fetch some data from your dataStore.
+        //   Now what if this set of queries are going to be used in multiple places in the application.
+        //   Not very ideal to write this code over and over again, right?
+        //   Here is the added advantage of Repository Classes.
+        //   You could write your data access code within the Repository and call it from multiple
+        //     Controllers / Libraries.
+
+        // 2.De-couples the application from the Data Access Layer
+        //   There are quite a lot of ORMs available for ASP.NET Core.
+        //   Currently the most popular one is Entity Framework Core, But that change in the upcoming years.
+        //   To keep in pace with the evolving technologies and to keep our Solutions up to date, it
+        //     is highly crucial to build applications that can switch over to a new
+        //     DataAccessTechnology with minimal impact on our application’s code base.
+        //   There can be also cases where you need to use multiple ORMs in a single solution.
+        //   Probably Dapper to fetch the data and EFCore to write the data.
+        //   This is solely for performance optimizations.
+        //   Repository pattern helps us to achieve this by creating an Abstraction over the
+        //     DataAccess Layer.
+        //   Now, you no longer have to depend on EFCore or any other ORM for your application.
+        //   EFCore becomes one of your options rather than your only option to access data.
+
+        // Building an Enterprise level ASP.NET Core Application would really need Repository Patterns
+        //   to keep the codebase future proof for atleast the next 20-25 years (After which, probably
+        //   the robots would take over 😛 ).
+
+
+        // Is Repository Pattern Dead?
+        // This is one of the most debated topics within the.NET Core Community.
+        // Microsoft has built the Entity Framework Core using the Repository Pattern and Unit of
+        //   Work Patterns.So, why do we need to add another layer of abstraction over the Entity
+        //   Framework Core, which is yet another abstraction of Data Access.
+        // The answer to this is also given by Microsoft.
+        // The Entity Framework DbContext class is based on the Unit of Work and Repository patterns
+        //   and can be used directly from your code, such as from an ASP.NET Core MVC controller.
+        // The Unit of Work and Repository patterns result in the simplest code, as in the CRUD
+        //   catalog microserThe Entity Framework DbContext class is based on the Unit of Work and
+        //   Repository patterns and can be used directly from your code, such as from an ASP.NET Core
+        //   MVC controller.
+        // The Unit of Work and Repository patterns result in the simplest code, as in the CRUD
+        //   catalog micro-service in eShopOnContainers.
+        // In cases where you want the simplest code possible, you might want to directly use the
+        //   DbContext class, as many developers do.
+        // However, implementing custom repositories provides several benefits when implementing more
+        //   complex microservices or applications.
+        // The Unit of Work and Repository patterns are intended to encapsulate the infrastructure
+        //   persistence layer so it is decoupled from the application and domain-model layers.
+        // Implementing these patterns can facilitate the use of mock repositories simulating access
+        //   to the database.
+
+        // Using a custom repository adds an abstraction layer that can be used to ease testing by
+        //   mocking the repository.
+        // There are multiple alternatives when mocking.
+        // You could mock just repositories or you could mock a whole unit of work.
+        // Usually mocking just the repositories is enough, and the complexity to abstract and mock a
+        //   whole unit of work is usually not needed.
+
+        // Microsoft themselves recommend using Repository Patterns in complex scenarios to reduce the
+        //   coupling and provide better Testability of your solutions.
+        // In cases where you want the simplest possible code, you would want to avoid the Repository Pattern.
+
+
+        // Let’s implement Repository Pattern in an ASP.NET Core WebApi Project.
+        // What seperates this guide from the others is that we will also be working with a Clean
+        //   Architecture in mind to demonstrate the real-life implementation.
+        // This means that we will be working with multiple Layers and Projects and also go through
+        //   the basics of Dependency Inversion Principle.
+
+        // Let’s add 2 more .NET Core Class Library Projects within the solution.
+        // We will call it DataAccess.EFCore and Model. Here are the features and purposes of each project.
+        // Model – Holds the Entities(Models) and (ViewModels), and Interfaces for repositories.
+        //   It does not depend on any other project in the solution.
+        // DataAccess,EFCore – Since we will be using Entity Framework Core – Code First Approach to
+        //   interact with our Database, let’s build a project that solely represents everything
+        //   related to EFCore.
+        // The aim is that, later down the road one can easily build another Data Access layer like
+        //   DataAccess.Dapper or so.
+        // And our application would still support it.Here is where Dependency Inversion comes to play.
+        // DataAccess library will contain the ApplicationDbContext and Migration, and implementations
+        //   for the repositories Interfaces Which inside Model. 
+
+        // Now after creating these Libraries we will add the Migration and ApplicationDbContext to
+        //   DataAccess, and we will add Model and ViewModel to Model.
+
+        // The next step is to make a folder in Learning.Model Library with name IRepository this
+        //   folder will contain all the Interfaces for each model and the functions that will be
+        //   inside each Interface.
+
+        // Now that we have configured our EFCore Layer, let’s talk a bit about the traditional way to
+        //   get data from this layer.
+        // Traditionally, you would directly call the dbContext object to read and write data.
+        // This is fine. But is it really ideal for the long run?
+        // When you use the dbContext directly, what you are doing is that, the Entity Framework Core
+        //   is being tightly coupled within your application.
+        // So, Tomorrow when there is something newer and better than EFCore, you would find it really
+        //   annoying to implement the new tech and make the corresponding changes. Right?
+        // One more disadvantage of directly using the dbContext directly is that you would be exposing
+        //   the DbContext, which is totally insecure.
+        // This is the reason to use Repository Pattern in ASP.NET Core Applications.
+
+        // Practical Use-Case of Repositories:
+        // While Performing CRUD Operations with Entity Framework Core, you might have noticed that the
+        //   basic essence of the code keeps the same.
+        // Yet we write it multiple times over and over.
+        // The CRUD Operations include Create, Read, Update, and Delete.
+        // So, why not have a class/interface setup where you can generalize each of these operations.
+
+        // As we know that all the models have some shard operations CRUD operations.
+        // C ==> Create. 
+        // R ==> Read.
+        // U ==> Update.
+        // D ==> Delete.
+        // So It will be better If we make an interface that contains all theses operations except
+        //   update, as each model has its own way to update.
+
+        // First up, let’s add a new folder Interfaces in our Model Project. Why?
+        // Because, we will be inverting the dependencies, so that, you can define the interface in
+        //   the Model Project, but the implementation can be outside the Domain Project.
+        // In this case, the implementations will go the DataAccess.EFCore Project.
+        // Thus, your Model layer will not depends on anything, rather, the other layers tend to
+        //   depend on the Model Layer’s interface.
+        // This is a simple explanation of Dependency Inversion Principle. Pretty Cool, yeah?
+
+        // This will be a Generic Interface, that can be used for both the Developer and Project
+        //   Classes. Here T is the specific class.
+        /*
+         public interface IGenericRepository<T> where T : class
+         {
+            T GetById(int id);
+            IEnumerable<T> GetAll();
+            IEnumerable<T> Find(Expression<Func<T, bool>> expression);
+            void Add(T entity);
+            void AddRange(IEnumerable<T> entities);
+            void Remove(T entity);
+            void RemoveRange(IEnumerable<T> entities);
+         }
+         */
+
+        // The set of functions depends on your preference.Ideally, we require 7 functions that cover
+        //   most of the data handling part.
+        // Get’s the entity By Id.
+        // Get’s all the Record.
+        // Finds a set of record that matches the passed expression.
+        // Adds a new record to the context
+        // Add a list of records
+        // Removes a record from the context
+        // Removes a list of records.
+
+        // Now, Let’s implement this Interfaces. Create a new class in the DataAccess.EFCore Project and name it Repositories/GenericRepository
+        /*
+        public class Repository<T> : IRepository<T> where T : class
+        {
+            protected readonly ApplicationContext _context;
+            public Repository(ApplicationContext context)
+            {
+                _context = context;
+            }
+            public void Add(T entity)
+            {
+                _context.Set<T>().Add(entity);
+            }
+            public void AddRange(IEnumerable<T> entities)
+            {
+                _context.Set<T>().AddRange(entities);
+            }
+            public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
+            {
+                return _context.Set<T>().Where(expression);
+            }
+            public IEnumerable<T> GetAll()
+            {
+                return _context.Set<T>().ToList();
+            }
+            public T GetById(int id)
+            {
+                return _context.Set<T>().Find(id);
+            }
+            public void Remove(T entity)
+            {
+                _context.Set<T>().Remove(entity);
+            }
+            public void RemoveRange(IEnumerable<T> entities)
+            {
+                _context.Set<T>().RemoveRange(entities);
+            }
+        }
+        */
+
+        // Now, Let’s implement this Interfaces. Create a new class in the DataAccess layer and name it
+        //   Repositories/GenericRepository
+
+        // This class will implement the IGenericRepository Interface.
+        // We will also inject the ApplicationContext here.
+        // This way we are hiding all the actions related to the dbContext object within Repository Classes.
+        // Also note that, for the ADD and Remove Functions, we just do the operation on the dbContext object.
+        // But we are not yet committing/updating/saving the changes to the database whatever.
+        // This is not something to be done in a Repository Class.
+        // We would need Unit of Work Pattern for these cases where you commit data to the database.
+        // We will discuss about Unit of Work in a later section.
+
+        // Understood why we used a Generic Repository instead of a IDevloperRepository??
+        // When there are large number of entities in our application, we would need separate
+        //   repositories for each entities.But we do not want to implement all of the above 7
+        //   Functions in each and every Repository Class, right? Thus we made a generic repository
+        //   that holds the most commonly used implementations.
+
+        // Now what happens if we need the records of Most Popular Student from our Database?
+        //   We do not have a function for it in our Generic Class, do we?
+        //   This is where we can see the advantage of building a Generic Repository.
+        //   This is where we can see the advantage of building a Generic Repository.
+
+        // Inheriting and Extending the Generic Repository
+        // In the Domain Project, under the Interfaces, add a new interface named IStudentRepository
+
+        /*
+         public interface IStudentRepository : IGenericRepository<Developer>
+         {
+             IEnumerable<Student> GetPopularStudent(int count);
+         }
+         */
+        // Here we are inheriting all the Functions of the Generic Repository, as well as adding a new
+        //   Function ‘GetPopularStudent’. Get it?
+
+        // Let’s implement the IDeveloperRepostory.Go to the DataAccess Project and under Repositories
+        //   folder, add a new class, DeveloperRepository.
+        /*
+         public class StudentRepository : Repository<Developer>, IStudentRepository
+         {
+            public StudentRepository(ApplicationContext context):base(context)
+            {
+            }
+            public IEnumerable<Student> GetPopularStudent(int count)
+            {
+                return _context.Student.OrderByDescending(d => d.Followers).Take(count).ToList();
+            }
+         }
+         */
+        // You can notice that we have not implemented all the 7 functions here, as it is is already
+        //   implemented in our Generic Repository. Saves a lot of lines, yeah?
+
+        // You can see that the interface and implementations are quite blank. So why create new class
+        //   and interface for Project? This can also attribute to a good practice while developing
+        //   applications.
+        // We also anticipate that in future, there can be functions that are spcific to the Project
+        //   Entity.
+        // To support them later on, we provide with interfaces and classes. Future Proofing, yeah?
+
+        // Finally, let’s register these Interfaces to the respective implementations in the Startup.cs
+        //  of the WebApi Project. Navigate to Startup.cs/ConfigureServices Method and add these lines.
+        /*
+          #region Repositories
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<IStudentRepository, StudentRepository>();
+            services.AddTransient<ICourseRepository, CourseRepository>();
+          #endregion
+         */
+        // Why we have to add these services to startup project file?
+        // As we want to achieve the dependency injection protocol(Pattern) to make that there is no
+        //   class depend on any other classes, So to do this we have to add services to the project
+        //   that define the implementation of each interface in our repository pattern.
+        #endregion
+
+
+        #region Unit Of Work Pattern
+        // Now after creating the repository pattern we need to add the Unit Of Work pattern which will
+        //   be responsible for saving data to database.
+
+        // Unit of Work Pattern is a design pattern with which you can expose various repositories in
+        //   our application.
+        // It has very similar properties of dbContext, just that Unit of Work is not coupled to any
+        //   framework like dbContext to Entity Framework Core.
+
+        // Till now, we have built a couple of repositories.
+        // We can easily inject these repositories to the constructor of the Services classes and
+        //  access data.
+        // This is quite easy when you have just 2 or 3 repository objects involved.
+        // What happens when there are quite more than 3 repositories.
+        // It would not be practical to keep adding new injections every new and then.
+        // In order to wrap all the Repositories to a Single Object, we use Unit Of Work.
+
+        // Unit of Work is responsible for exposing the available Repositories and to Commit Changes to
+        //   the DataSource ensuring a full transaction, without loss of data.
+
+        // The other major advantage is that, multiple repository objects will have different instances
+        //   of dbcontext within them.This can lead to data leaks in complex cases.
+
+        // Let’s say that you have a requirement to insert a new Student and a new Course within the
+        //   same transaction.What happens when the new Student get’s inserted but the Project
+        //   Repository fails for some reason.
+        // In real-world scenarios, this is quite fatal.
+        // We will need to ensure that both the repositories work well, before committing any change to
+        //   the database.
+        // This is exactly why we decided to not include SaveChanges in any of the repositories. Clear?
+
+        // Rather, the SaveChanges will be available in the UnitOfWork Class.
+        // You will get a better idea once you see the implementation.
+
+        // Let’s get started with the IUnitOfWork.
+        // Create a new Interface in the domain Project, Interfaces/IUnitOfWork
+
+        /*
+          public interface IUnitOfWork : IDisposable
+          {
+            IStudentRepository Developers { get; }
+            ICourseRepository Projects { get; }
+            int Complete();
+          }
+         */
+        // You can see that we are listing the interfaces of the required Repositories within the
+        //   UOW Interface.
+        // It’s also a Disposable Element.
+        // Finally we have a ‘Complete’ Function which will save the changes to the database.
+        // Let’s implement this interface. Create the implementation at the DataAccess Project.
+        // Add a new class in the UnitOfWork/UnitOfWork.cs
+        /*
+          public class UnitOfWork : IUnitOfWork
+          {
+            private readonly ApplicationContext _context;
+            public UnitOfWork(ApplicationContext context)
+            {
+                _context = context;
+                Developers = new DeveloperRepository(_context);
+                Projects = new ProjectRepository(_context);
+            }
+            public IDeveloperRepository Developers { get; private set; }
+            public IProjectRepository Projects { get; private set; }
+            public int Complete()
+            {
+                return _context.SaveChanges();
+            }
+            public void Dispose()
+            {
+                _context.Dispose();
+            }
+          }
+         */
+        // We could make the Complete method here of type Void not int.
+
+        // Note that, Here we are injecting a private AppplicationContext.
+        // Let’s wire up or controllers with these Repositories.
+        // Ideally you would want to have a service layer between the Repository and Controllers.
+        // But, to keep things fairly simple, we will avoid the service layer now.
+        // Before that, let’s not forget to register the IUnitofWork Interface in our Application.
+        // Navigate to Startup.cs/ConfigureServices Method and add this line.
+        // services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+        // Now after we have applied the repository and unit of work patterns, we could now use them
+        //   inside our controller instead of using ApplicationDbContext directly.
+        /*
+         public class StudentController : ControllerBase
+         {   
+            private readonly IUnitOfWork _unitOfWork;
+            public StudentController(IUnitOfWork unitOfWork)
+            {
+                _unitOfWork = unitOfWork;
+            }
+         }
+         */
+        // Here are injecting only the IUnitOfWork object. This way, you can completely avoid writing
+        //   lines and lines of injections to your controllers.
+        // Now, let’s say we need two endpoints for this controller.A POST and a GET Method.
+        // Get all the Popular Student.
+        // Insert a new Student and a new Course.
+
+        // We’ll start working on the methods now.
+        /*
+          public IActionResult GetPopularStudent([FromQuery]int count)
+          {
+              var popularStudent = _unitOfWork.Student.GetPopularStudent(count);
+              return Ok(popularDevelopers);
+          }
+         */
+
+
+        /*
+         [HttpPost]
+        public IActionResult AddDeveloperAndProject()
+        {
+            var Student = new Developer
+            {
+                Address = aga,
+                Name = "Mukesh Murugan"
+            };
+            var Course = new Course
+            {
+                Name = "codewithmukesh"
+            };
+            _unitOfWork.Student.Add(developer);
+            _unitOfWork.Course.Add(project);
+            _unitOfWork.Complete();
+            return Ok();
+
+        }
+         */
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
 
 
     }

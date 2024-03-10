@@ -1,4 +1,5 @@
-﻿using learning.Models;
+﻿using Learning.DataAccess;
+using Learning.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,11 @@ namespace learning.Controllers
 {
     public class DepartmentController : Controller
     {
-        ApplicationDbContext _Context = new ApplicationDbContext();
+        ApplicationDbContext _Context;
+        public DepartmentController(ApplicationDbContext context)
+        {
+            _Context = context;
+        }
         public IActionResult Index()
         {
             // We have to know that the dot net framework doesn't support laze loading as if 

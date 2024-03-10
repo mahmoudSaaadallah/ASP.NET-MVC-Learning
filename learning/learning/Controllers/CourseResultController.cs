@@ -1,4 +1,5 @@
-﻿using learning.Models;
+﻿using Learning.DataAccess;
+using Learning.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
